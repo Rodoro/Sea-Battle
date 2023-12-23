@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
+import CheckboxForm from '@/components/interface/CheckboxForm';
 
 const Register = () => {
     const [error, setError] = useState("");
@@ -22,6 +23,7 @@ const Register = () => {
         e.preventDefault();
         const name = e.target[0].value;
         const password = e.target[1].value;
+        const admin =e.target[2].checked;
 
         if (!password || password.length < 8) {
             setError("Ошибка пароля");
@@ -37,6 +39,7 @@ const Register = () => {
                 body: JSON.stringify({
                     name,
                     password,
+                    admin,
                 }),
             });
             if (res.status === 400) {
@@ -63,6 +66,7 @@ const Register = () => {
                 <form onSubmit={handleSubmit}>
                     <InputForm text="Никнейм" type="text" placeholder="Имя" />
                     <InputForm text="Пароль" type="password" placeholder="Пароль" />
+                    <CheckboxForm text="Хотите ли вы стать администратором?" />
                     <ButtonForm type="submit">
                         {" "}
                         Зарегистрировать

@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 
 export const POST = async (request: any) => {
-  const { name, password } = await request.json();
+  const { name, password, admin } = await request.json();
 
   await connect();
 
@@ -14,12 +14,14 @@ export const POST = async (request: any) => {
     return new NextResponse("Пользователь уже зарегистрирован", { status: 400 });
   }
 
+  
+
   const hashedPassword = await bcrypt.hash(password, 12);
   const newUser = new User({
     name,
     password: hashedPassword,
+    role: admin? "admin": "user",
   });
-  console.log(newUser);
 
   try {
     await newUser.save();
