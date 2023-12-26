@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from '../interface/Button'
 import Modal from '../interface/Modal'
 import InputForm from "../interface/InputForm";
@@ -10,16 +10,32 @@ import PrizeCardAdmin from "../interface/cards/PrizeCardAdmin";
 const PrizesAdmin = () => {
     const [modal, setModal] = useState(false);
     const [error, setError] = useState("");
-    const { data: session }: any = useSession();
+    const { data: session, status: sessionStatus }: any = useSession();
+    const [prizes, setPrizes] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const [img, setImg] = useState('');
 
-    
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        fetch("/api/prizes?name=" + session.user?.name, {
+            method: "GET",
+        })
+            .then(response => response.json())
+            .then((data) => {
+                setPrizes(data.items);
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error("Error fetching prizes:", error);
+                setLoading(false);
+            });
+    }, [])
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         const title = e.target[0].value;
-        const description = e.target[1].value; 
+        const description = e.target[1].value;
 
         const formData = new FormData();
         formData.append('creator', session.user?.name);
@@ -42,6 +58,18 @@ const PrizesAdmin = () => {
         }
     }
 
+    const handleEdit = (id) => {
+        console.log("Редактирование приза с id:", id);
+    };
+
+    const handleDelete = (id) => {
+        console.log("Удаление приза с id:", id);
+    };
+
+    if (loading) {
+        return <p>Загрузка...</p>;
+    }
+
     return (
         <div>
             <div>
@@ -61,8 +89,12 @@ const PrizesAdmin = () => {
                         </ButtonForm>
                     </form>
                 </Modal>
-                <PrizeCardAdmin prize={{id:2}}/>
-
+                <div className="flex flex-col items-center text-center">
+                    <h1>Список призов</h1>
+                    {prizes.map((prize: any) =>
+                        <PrizeCardAdmin key={prize.id} prize={prize} handleDelete={handleDelete} handleEdit={handleEdit}/>
+                    )}
+                </div>
             </div>
         </div>
     )

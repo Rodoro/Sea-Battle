@@ -14,8 +14,6 @@ export const POST = async (request: any) => {
     return new NextResponse("Пользователь уже зарегистрирован", { status: 400 });
   }
 
-  
-
   const hashedPassword = await bcrypt.hash(password, 12);
   const newUser = new User({
     name,
