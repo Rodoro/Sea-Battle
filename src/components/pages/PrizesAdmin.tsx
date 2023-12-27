@@ -17,7 +17,10 @@ const PrizesAdmin = () => {
     const [img, setImg] = useState('');
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        getPrizes()
+    }, [])
+
+    async function getPrizes() {
         fetch("/api/prizes?name=" + session.user?.name, {
             method: "GET",
         })
@@ -30,7 +33,7 @@ const PrizesAdmin = () => {
                 console.error("Error fetching prizes:", error);
                 setLoading(false);
             });
-    }, [])
+    }
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
@@ -51,20 +54,13 @@ const PrizesAdmin = () => {
             if (res.status === 200) {
                 setError("");
                 setModal(false);
+                getPrizes();
             }
         } catch (error) {
             setError("Ошибка, повторите попытку");
             console.log(error);
         }
     }
-
-    const handleEdit = (id) => {
-        console.log("Редактирование приза с id:", id);
-    };
-
-    const handleDelete = (id) => {
-        console.log("Удаление приза с id:", id);
-    };
 
     if (loading) {
         return <p>Загрузка...</p>;
@@ -75,14 +71,14 @@ const PrizesAdmin = () => {
             <div>
                 <Button onClick={() => setModal(true)}>Добавить приз</Button>
                 <Modal visible={modal} setVisible={setModal}>
-                    <h1 className="text-4xl text-center font-semibold mb-8">Создание нового приза </h1>
+                    <h1 className="text-4xl text-center font-semibold mb-8">Создание нового приза</h1>
                     <form onSubmit={handleSubmit}>
                         <InputForm text="Название" type="text" placeholder="Название" />
                         <TextareaForm text="Описание" placeholder="Описание" />
                         <div className="mb-8">
                             <h1>Загрузите изображение</h1>
                             <input onChange={(event) => setImg(event.target.files[0])} className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" accept=".jpg,.png" type="file" />
-                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">PNG, JPG(MAX. 800x400px).</p>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">PNG, JPG(MAX. 500x500px).</p>
                         </div>
                         <ButtonForm type="submit">
                             Создать
@@ -92,7 +88,7 @@ const PrizesAdmin = () => {
                 <div className="flex flex-col items-center text-center">
                     <h1>Список призов</h1>
                     {prizes.map((prize: any) =>
-                        <PrizeCardAdmin key={prize.id} prize={prize} handleDelete={handleDelete} handleEdit={handleEdit}/>
+                        <PrizeCardAdmin key={prize.id} prize={prize} updateList={getPrizes}/>
                     )}
                 </div>
             </div>
