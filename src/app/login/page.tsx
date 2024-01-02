@@ -62,7 +62,7 @@ const Login = () => {
                     <div className="text-center text-gray-500 mt-4">- ИЛИ -</div>
                     <Link
                         className="block text-center text-blue-500 hover:underline mt-2"
-                        href="/login"
+                        href="/register"
                     >
                         Зарегистрироватся
                     </Link>

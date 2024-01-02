@@ -28,6 +28,7 @@ const PrizeCardAdmin = (props: any) => {
             });
             if (res.status === 200) {
                 setModal(false);
+                props.updateList()
             }
         } catch (error) {
             console.error(error);
@@ -71,7 +72,7 @@ const PrizeCardAdmin = (props: any) => {
                 <ButtonForm onClick={() => setModal(true)}>Редактирование</ButtonForm>
             </div>
             <Modal visible={modal} setVisible={setModal}>
-                <h1 className="text-4xl text-center font-semibold mb-8">Создание нового приза</h1>
+                <h1 className="text-4xl text-center font-semibold mb-8">Редактирование приза</h1>
                 <form onSubmit={handleEdit}>
                     <InputForm text="Название" value={props.prize.title} type="text" placeholder="Название" />
                     <TextareaForm text="Описание" value={props.prize.description} placeholder="Описание" />
