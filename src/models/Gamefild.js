@@ -8,6 +8,7 @@ const gameSchema = new Schema(
         creator: { type: String, required: true },
         size: { type: Number, required: true },
         rules: { type: String },
+        edit: {type: Boolean, default: true},
         ships: [{
             id: { type: Number },
             place: { type: Number },
@@ -37,5 +38,5 @@ gameSchema.pre('save', function (next) {
     }
 });
 
-const GameModal = mongoose.models.Game || mongoose.model("GameFild", gameSchema)
+const GameModal = mongoose.models.GameFild || mongoose.model("GameFild", gameSchema)
 export default GameModal;
