@@ -9,8 +9,8 @@ export const POST = async (req: any, { params }: { params: { id: string } }) => 
         await connect();
 
         await Game.findOneAndUpdate({ id: id }, {
-            title: data.get('title'),
-            description: data.get('description'),
+            size: data.get('size'),
+            rules: data.get('rules'),
         })
 
         return Response.json({ id })

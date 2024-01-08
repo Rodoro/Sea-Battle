@@ -25,8 +25,6 @@ export const POST = async (req: any, { params }: { params: { id: string } }) => 
             description: data.get('description'),
         })
 
-        //TODO:проверка естли есть img то изменить существующий
-
         return Response.json({ id })
     } catch (error) {
         console.error(error)

@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import ButtonForm from '../ButtonForm';
 import { useRouter } from 'next/navigation';
+import Modal from '../Modal';
+import TextareaForm from '../TextareaForm';
+import InputForm from '../InputForm';
 
 const GameCardAdmin = (props: any) => {
     const [modal, setModal] = useState(false);
@@ -16,6 +19,29 @@ const GameCardAdmin = (props: any) => {
             .catch((error) => {
                 console.error("Error fetching game:", error);
             });
+    };
+
+    const handleEdit = async (e: any) => {
+        e.preventDefault();
+        const size = e.target[0].value;
+        const rules = e.target[1].value;
+
+        const formData = new FormData();
+        formData.append('size', size);
+        formData.append('rules', rules);
+
+        try {
+            const res = await fetch("/api/game/" + props.game.id, {
+                method: "POST",
+                body: formData
+            });
+            if (res.status === 200) {
+                setModal(false);
+                props.updateList()
+            }
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (
@@ -48,8 +74,27 @@ const GameCardAdmin = (props: any) => {
             </div>
             <div className='flex flex-col space-y-2 self-center'>
                 <ButtonForm onClick={() => handleDelete(props.game.id)}>Удалить</ButtonForm>
-                <ButtonForm onClick={() => router.push('/game-fields/' + props.game.id)}>Редактирование</ButtonForm>
+                <ButtonForm onClick={() => setModal(true)}>Редактировать</ButtonForm>
+                <ButtonForm onClick={() => router.push('/game-fields/' + props.game.id)}>Зайти</ButtonForm>
             </div>
+            <Modal visible={modal} setVisible={setModal}>
+                <h1 className="text-4xl text-center font-semibold mb-8">Редактирование игрового поля</h1>
+                <form onSubmit={handleEdit}>
+                    <InputForm text="Размеры" value={props.game.size} type="text" placeholder="Размер" />
+                    <TextareaForm text="Правила" value={props.game.rules} placeholder="Правила" />
+                    <div className="flex flex-col space-y-4">
+                        <ButtonForm type="submit">
+                            Сохранить
+                        </ButtonForm>
+                        <ButtonForm type="button" onClick={() => setModal(false)}>
+                            Отмена
+                        </ButtonForm>
+                        <ButtonForm type="button" onClick={() => handleDelete(props.game.id)}>
+                            Удалить
+                        </ButtonForm>
+                    </div>
+                </form>
+            </Modal>
         </div>
     )
 }
