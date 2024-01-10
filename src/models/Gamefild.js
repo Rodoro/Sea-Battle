@@ -8,7 +8,7 @@ const gameSchema = new Schema(
         creator: { type: String, required: true },
         size: { type: Number, required: true },
         rules: { type: String },
-        edit: {type: Boolean, default: true},
+        edit: { type: Boolean, default: true },
         ships: [{
             id: { type: Number },
             place: { type: Number },
