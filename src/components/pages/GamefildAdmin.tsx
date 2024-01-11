@@ -1,7 +1,7 @@
 import { useSession } from 'next-auth/react';
 import { uptime } from 'process';
 import React, { useEffect, useState } from 'react'
-import Modal from '../interface/Modal';
+import Image from 'next/image'
 
 const GamefildAdmin = (props: any) => {
   const { data: session, status: sessionStatus }: any = useSession();
@@ -48,7 +48,7 @@ const GamefildAdmin = (props: any) => {
       const id = i * game.size + j
       cells.push(
         <td key={j} className={id + " w-[50px] h-[50px] border-solid border-2 border-sky-500 text-center"}>
-          {id}
+
         </td>
       );
     }
@@ -219,7 +219,7 @@ const GamefildAdmin = (props: any) => {
               <li key={ship.id} className='p-4 border-solid border-2 border-sky-500'>
                 {ship.id + 1}
                 <select
-                  className='text-black'
+                  className='text-black ml-4'
                   value={selectedPrize[ship.id]}
                   onChange={(e) => handlePrizeChange(e, ship.id)}
                 >
