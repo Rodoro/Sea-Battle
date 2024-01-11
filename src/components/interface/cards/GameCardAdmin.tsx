@@ -67,8 +67,8 @@ const GameCardAdmin = (props: any) => {
                     Участники
                 </h5>
                 <ul className="mb-4 text-base text-neutral-600 dark:text-neutral-200">
-                    {props.game.users.map((name) => (
-                        <li key={name}>{name}</li>
+                    {props.game.users.map((user) => (
+                        <li key={user.name}>{user.name}</li>
                     ))}
                 </ul>
             </div>

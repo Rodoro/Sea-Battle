@@ -7,7 +7,7 @@ import React from 'react'
 const page = ({ params }: { params: { id: number } }) => {
     return (
         <RoleCheker>
-            <GamefildAdmin />
+            <GamefildAdmin id={params?.id}/>
             <GamefildUser />
         </RoleCheker>
     )
