@@ -7,11 +7,23 @@ export const GET = async (req: any) => {
 
     try {
         await connect();
-        const items = await Game.find({creator: name})
+        let items = []
 
-        return Response.json({items})
+        if (searchParams.get('role') == 'user') {
+            await Game.find().then((res) => {
+                res.forEach((game) => {
+                    game.users.forEach((user: any) => {
+                        items.push(game)
+                    })
+                })
+            })
+        } else {
+            items = await Game.find({ creator: name })
+        }
+
+        return Response.json({ items })
     } catch (error) {
         console.error(error)
-        return new Response("Ошибка сервера", {status:500})
+        return new Response("Ошибка сервера", { status: 500 })
     }
 }
