@@ -19,6 +19,7 @@ const GamefildAdmin = (props: any) => {
   useEffect(() => {
     fetchUsers();
     fetchShips();
+    setGameFildPost();
     fetch("/api/prizes?name=" + session.user?.name, {
       method: "GET",
     })
@@ -45,6 +46,7 @@ const GamefildAdmin = (props: any) => {
       })
   }, [])
 
+  //#region 
   const renderCells = (i: any) => {
     const cells = [];
     for (let j = 1; j <= game.size; j++) {
@@ -212,23 +214,64 @@ const GamefildAdmin = (props: any) => {
   const handleClick = (id: any) => {
     setIsSelected(id);
   }
+  //#endregion
 
   async function addShipField(id: any) {
     if (isSelected) {
       setIsSelected(null);
       if (!gameField.includes(isSelected)) {
+        const formData = new FormData();
+        formData.append('id', props.id);
+        formData.append('place', id);
+        formData.append('shipId', isSelected - 1);
+
+        fetch("/api/game/ship/add", {
+          method: "POST",
+          body: formData
+        })
+          .catch((error) => {
+            console.error("Error fetching prizes:", error);
+          })
+
         const newGameField = [...gameField]
         newGameField[id] = isSelected;
         setGameField(newGameField);
-        //добавлять позицию кораблю в бд
       }
     }
     if (gameField[id] != undefined) {
+      const formData = new FormData();
+      formData.append('id', props.id);
+      formData.append('shipId', gameField[id] - 1);
+
+      fetch("/api/game/ship/delete", {
+        method: "POST",
+        body: formData
+      })
+        .catch((error) => {
+          console.error("Error fetching prizes:", error);
+        })
+
       const newGameField = [...gameField]
       newGameField[id] = undefined;
       setGameField(newGameField);
-      //удалять позицию корабля в бд
     }
+  }
+
+  async function setGameFildPost() {
+    const formData = new FormData();
+    formData.append('id', props.id);;
+
+    fetch("/api/game/ship/info", {
+      method: "POST",
+      body: formData
+    })
+      .then(response => response.json())
+      .then((data) => {
+        setGameField(data.array);
+      })
+      .catch((error) => {
+        console.error("Error fetching prizes:", error);
+      })
   }
 
   if (loading) {
