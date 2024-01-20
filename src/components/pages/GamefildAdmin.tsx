@@ -13,6 +13,8 @@ const GamefildAdmin = (props: any) => {
   const [ships, setShips] = useState([]);
   const [selectedPrize, setSelectedPrize] = useState([]);
   const [prizes, setPrizes] = useState([]);
+  const [isSelected, setIsSelected] = useState();
+  const [gameField, setGameField] = useState([]);
 
   useEffect(() => {
     fetchUsers();
@@ -34,6 +36,7 @@ const GamefildAdmin = (props: any) => {
       .then((data) => {
         setGame(data.item);
         setAmount(data.users[0].amount);
+        //перебор короблей в game field
         setLoading(false);
       })
       .catch((error) => {
@@ -47,8 +50,13 @@ const GamefildAdmin = (props: any) => {
     for (let j = 1; j <= game.size; j++) {
       const id = i * game.size + j
       cells.push(
-        <td key={j} className={id + " w-[50px] h-[50px] border-solid border-2 border-sky-500 text-center"}>
-
+        <td key={j} className={id + " w-[50px] h-[50px] border-solid border-2 border-sky-500 text-center"} onClick={() => addShipField(id)}>
+          {gameField[id] ?
+            <Image
+              src={"/_img/game-fild/ship.png"}
+              width={50}
+              height={50}
+              alt="" /> : null}
         </td>
       );
     }
@@ -201,6 +209,28 @@ const GamefildAdmin = (props: any) => {
       });
   }
 
+  const handleClick = (id: any) => {
+    setIsSelected(id);
+  }
+
+  async function addShipField(id: any) {
+    if (isSelected) {
+      setIsSelected(null);
+      if (!gameField.includes(isSelected)) {
+        const newGameField = [...gameField]
+        newGameField[id] = isSelected;
+        setGameField(newGameField);
+        //добавлять позицию кораблю в бд
+      }
+    }
+    if (gameField[id] != undefined) {
+      const newGameField = [...gameField]
+      newGameField[id] = undefined;
+      setGameField(newGameField);
+      //удалять позицию корабля в бд
+    }
+  }
+
   if (loading) {
     return <p>Загрузка...</p>;
   }
@@ -216,7 +246,7 @@ const GamefildAdmin = (props: any) => {
 
           <ul>
             {ships ? ships.map((ship) => (
-              <li key={ship.id} className='p-4 border-solid border-2 border-sky-500'>
+              <li key={ship.id} onClick={() => handleClick(ship.id + 1)} className={`p-4 border-solid border-2 border-sky-500 ${isSelected == ship.id + 1 ? 'bg-blue-500' : 'bg-black'}`}>
                 {ship.id + 1}
                 <select
                   className='text-black ml-4'
