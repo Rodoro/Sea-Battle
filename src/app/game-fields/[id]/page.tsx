@@ -8,7 +8,7 @@ const page = ({ params }: { params: { id: number } }) => {
     return (
         <RoleCheker>
             <GamefildAdmin id={params?.id}/>
-            <GamefildUser />
+            <GamefildUser id={params?.id} />
         </RoleCheker>
     )
 }
