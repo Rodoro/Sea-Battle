@@ -14,7 +14,17 @@ export const POST = async (req: any) => {
                     array[ship.place] = ship.id + 1;
                 }
             })
+            game.users.forEach((user) => {
+                user.shot.forEach((shot) => {
+                    if (array[shot]) {
+                        array[shot] = 0
+                    } else {
+                        array[shot] = 999
+                    }
+                })
+            })
         })
+        console.log(array)
 
         return Response.json({ array })
     } catch (error) {

@@ -53,12 +53,22 @@ const GamefildAdmin = (props: any) => {
       const id = i * game.size + j
       cells.push(
         <td key={j} className={id + " w-[50px] h-[50px] border-solid border-2 border-sky-500 text-center"} onClick={() => addShipField(id)}>
-          {gameField[id] ?
+          {gameField[id] && gameField[id] != 999 ?
             <Image
               src={"/_img/game-fild/ship.png"}
               width={50}
               height={50}
-              alt="" /> : null}
+              alt="" /> : gameField[id] == 999 ?
+              <Image
+                src={"/_img/game-fild/away.png"}
+                width={50}
+                height={50}
+                alt="" /> : gameField[id] == 0 ?
+                <Image
+                  src={"/_img/game-fild/got.png"}
+                  width={50}
+                  height={50}
+                  alt="" /> : null}
         </td>
       );
     }

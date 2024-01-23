@@ -2,6 +2,8 @@ import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import MarkText from '../interface/MarkText';
+import Modal from '../interface/Modal';
+import ButtonForm from '../interface/ButtonForm';
 
 const GamefildUser = (props: any) => {
   const { data: session, status: sessionStatus }: any = useSession();
@@ -9,6 +11,7 @@ const GamefildUser = (props: any) => {
   const [game, setGame] = useState();
   const [gameField, setGameField] = useState([]);
   const [amount, setAmount] = useState();
+  const [modal, setModal] = useState(false);
 
   useEffect(() => {
     fetchGameField()
@@ -33,12 +36,22 @@ const GamefildUser = (props: any) => {
       const id = i * game.size + j
       cells.push(
         <td key={j} className={id + " w-[50px] h-[50px] border-solid border-2 border-sky-500 text-center"} onClick={() => addShotInField(id)}>
-          {gameField[id] ?
+          {gameField[id] && gameField[id] != 999 ?
             <Image
               src={"/_img/game-fild/ship.png"}
               width={50}
               height={50}
-              alt="" /> : null}
+              alt="" /> : gameField[id] == 999 ?
+              <Image
+                src={"/_img/game-fild/away.png"}
+                width={50}
+                height={50}
+                alt="" /> : gameField[id] == 0 ?
+                <Image
+                  src={"/_img/game-fild/got.png"}
+                  width={50}
+                  height={50}
+                  alt="" /> : null}
         </td>
       );
     }
@@ -64,6 +77,7 @@ const GamefildUser = (props: any) => {
       .then(response => response.json())
       .then((data) => {
         setGameField(data.array);
+        console.log(data.array)
       })
       .catch((error) => {
         console.error("Error fetching prizes:", error);
@@ -71,7 +85,28 @@ const GamefildUser = (props: any) => {
   }
 
   async function addShotInField(id) {
-    
+    const formData = new FormData();
+    formData.append('id', props.id);
+    formData.append('shot', id);
+    formData.append('name', session.user?.name);
+    formData.append('cretorName', game.creator);
+    formData.append('amount', amount);
+
+    fetch("/api/game/user/shot", {
+      method: "POST",
+      body: formData
+    })
+      .then(response => response.json())
+      .then((data) => {
+        setAmount(data.amount);
+        if (amount == 0) {
+          setModal(true);
+        }
+        fetchGameField()
+      })
+      .catch((error) => {
+        console.error("Error fetching prizes:", error);
+      })
   }
 
   if (loading) {
@@ -88,12 +123,18 @@ const GamefildUser = (props: any) => {
           <h1>{"Количство ходов: " + amount}</h1>
         </div>
         <h1><strong>Правила игры:</strong></h1>
-        <div  className='p-4 border-solid border-2 border-sky-500'>
+        <div className='p-4 border-solid border-2 border-sky-500'>
           <MarkText>
             {game.rules}
           </MarkText>
         </div>
       </div>
+      <Modal visible={modal} setVisible={setModal}>
+        <h2>У вас не осталось ходов</h2>
+        <ButtonForm type="button" onClick={() => setModal(false)}>
+          Хорошо
+        </ButtonForm>
+      </Modal>
     </div>
   )
 }
