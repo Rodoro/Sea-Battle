@@ -16,7 +16,6 @@ export const POST = async (req: any) => {
             user.shot.push(data.get('shot'));
             user.amount = amount
             await game.save();
-            //TODO: добавить добавление приза
         }
 
         console.log(amount);
